@@ -1,0 +1,2741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EsyaSoft Utility Analytics Platform - Complete Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ==================== GLOBAL STYLES ==================== */
+        :root {
+            --primary: #7ed957;
+            --primary-dark: #6bc246;
+            --bg-main: #fafbfc;
+            --bg-white: #ffffff;
+            --bg-dark: #0a0e1a;
+            --text-dark: #1a1a1a;
+            --text-muted: #6c757d;
+            --border: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== LOGIN PAGE STYLES ==================== */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .login-container {
+            background: var(--bg-white);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .login-left {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -150px;
+            right: -150px;
+        }
+
+        .brand {
+            text-align: center;
+            z-index: 1;
+            margin-bottom: 2rem;
+        }
+
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .brand h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand p {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .features {
+            list-style: none;
+            margin-top: 2rem;
+            z-index: 1;
+        }
+
+        .features li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+
+        .features li::before {
+            content: '✓';
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .login-right {
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--bg-main);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236c757d' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(126, 217, 87, 0.3);
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(126, 217, 87, 0.4);
+        }
+
+        /* ==================== NAVBAR ==================== */
+        .navbar {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: 0.875rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px var(--shadow);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 0.625rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-dark);
+        }
+
+        .breadcrumb .current {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-main);
+            border-radius: 0.625rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-profile:hover {
+            background: var(--border);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .back-btn, .ask-ai-btn {
+            padding: 0.625rem 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn {
+            background: var(--bg-main);
+        }
+
+        .back-btn:hover {
+            background: var(--border);
+        }
+
+        .ask-ai-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .ask-ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(126, 217, 87, 0.3);
+        }
+
+        /* ==================== CHATBOT INTERFACE ==================== */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .greeting-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .greeting-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 30px rgba(126, 217, 87, 0.3);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .greeting-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .greeting-name {
+            color: var(--primary-dark);
+        }
+
+        .greeting-section p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .search-section {
+            max-width: 900px;
+            margin: 0 auto 3rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            background: var(--bg-white);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .search-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(126, 217, 87, 0.2);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            padding-right: 200px;
+            border: none;
+            border-radius: 1.25rem;
+            font-size: 1rem;
+            font-family: inherit;
+            background: transparent;
+        }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-actions {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.625rem;
+            border: none;
+            background: var(--bg-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--border);
+            transform: scale(1.05);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            width: auto;
+            padding: 0 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .categories-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-card {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-card[data-category="load"] .category-icon {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .category-card[data-category="theft"] .category-icon {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .category-card[data-category="tariff"] .category-icon {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .category-card[data-category="consumer"] .category-icon {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .category-card[data-category="defaulter"] .category-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .category-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-description {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .category-card[data-restricted="true"] {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .category-card[data-restricted="true"]::after {
+            content: '🔒';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.25rem;
+        }
+
+        /* ==================== DASHBOARD ==================== */
+        .dashboard-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dashboard-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .dashboard-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .dashboard-title p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .time-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-white);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .time-selector button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .time-selector button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-white);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .kpi-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .kpi-change.positive {
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .kpi-change.negative {
+            color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--bg-white);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .data-table-container {
+            background: var(--bg-white);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: var(--bg-main);
+        }
+
+        .data-table th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--bg-main);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .status-normal {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .ai-cta-section {
+            background: linear-gradient(135deg, rgba(126, 217, 87, 0.1) 0%, rgba(107, 194, 70, 0.1) 100%);
+            border: 2px dashed var(--primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .ai-cta-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ai-cta-section p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-cta-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 0.625rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .ai-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(126, 217, 87, 0.4);
+        }
+
+        /* ==================== CHAT RESPONSE ==================== */
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .user-message, .ai-response {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .ai-response {
+            border: 2px solid var(--primary);
+            padding: 2rem;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .ai-avatar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .message-info {
+            flex: 1;
+        }
+
+        .message-author {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .message-content {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .thinking-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+            30% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .response-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .response-text h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .response-text p {
+            margin-bottom: 1rem;
+        }
+
+        .response-text ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .response-text li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sources-section {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .sources-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .source-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .source-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .source-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .source-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .source-url {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .action-buttons .action-btn {
+            width: auto;
+            padding: 0.625rem 1.25rem;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .action-buttons .action-btn:hover {
+            border-color: var(--primary);
+            background: var(--bg-main);
+        }
+
+        .follow-up-section {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .follow-up-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .follow-up-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .follow-up-question {
+            padding: 0.875rem 1rem;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 0.625rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .follow-up-question:hover {
+            border-color: var(--primary);
+            background: rgba(126, 217, 87, 0.05);
+        }
+
+        /* ==================== RETAIL CUSTOMER INTERFACE ==================== */
+        .customer-context-card {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .context-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .context-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .context-info {
+            flex: 1;
+        }
+
+        .context-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .context-info p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .cache-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(126, 217, 87, 0.1);
+            border-radius: 0.5rem;
+        }
+
+        .cache-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse-cache 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-cache {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cache-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .context-item {
+            text-align: center;
+        }
+
+        .context-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .context-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .context-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .customer-chat-section {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 2rem;
+        }
+
+        .chat-header-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .chat-header-section h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-header-section p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action-card {
+            background: var(--bg-main);
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .quick-action-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px var(--shadow);
+            background: rgba(126, 217, 87, 0.05);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .quick-action-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .customer-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-main);
+            border-radius: 1rem;
+            min-height: 200px;
+        }
+
+        .customer-message {
+            margin-bottom: 1.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .customer-message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .customer-message.assistant {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            position: relative;
+        }
+
+        .customer-message.user .message-bubble {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .customer-message.assistant .message-bubble {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .message-bubble-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .message-bubble-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.25rem;
+            padding: 1rem 1.25rem;
+        }
+
+        .typing-indicator .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+        }
+
+        .customer-input-section {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .customer-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: var(--bg-main);
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .customer-input-wrapper:focus-within {
+            border-color: var(--primary);
+            background: var(--bg-white);
+        }
+
+        .customer-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .customer-input:focus {
+            outline: none;
+        }
+
+        .customer-send-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .customer-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(126, 217, 87, 0.4);
+        }
+
+        .input-hint {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+        }
+
+        .response-time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(126, 217, 87, 0.1);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 968px) {
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+
+            .login-left {
+                display: none;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-input {
+                padding-right: 60px;
+            }
+
+            .action-btn.primary {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container, .chat-container {
+                padding: 2rem 1rem;
+            }
+
+            .greeting-section h1 {
+                font-size: 1.875rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== PAGE 1: LOGIN ==================== -->
+    <div id="loginPage" class="page active">
+        <div class="login-page">
+            <div class="login-container">
+                <div class="login-left">
+                    <div class="brand">
+                        <div class="brand-icon">⚡</div>
+                        <h1>EsyaSoft</h1>
+                        <p>Utility Analytics Platform</p>
+                    </div>
+                    <ul class="features">
+                        <li>AI-Powered Analytics & Insights</li>
+                        <li>Real-time Load Forecasting</li>
+                        <li>Theft & Anomaly Detection</li>
+                        <li>Smart Tariff Management</li>
+                        <li>Predictive Defaulter Analysis</li>
+                    </ul>
+                </div>
+
+                <div class="login-right">
+                    <div class="login-header">
+                        <h2>Welcome Back</h2>
+                        <p>Sign in to access your utility analytics dashboard</p>
+                    </div>
+
+                    <form onsubmit="return handleLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">User Type</label>
+                            <select class="form-input form-select" id="userRole" required onchange="handleRoleChange()">
+                                <option value="">Select your user type</option>
+                                <optgroup label="Enterprise Users">
+                                    <option value="admin">Admin</option>
+                                    <option value="analyst">Analyst</option>
+                                    <option value="operator">Operator</option>
+                                    <option value="viewer">Viewer</option>
+                                </optgroup>
+                                <optgroup label="Retail Customers">
+                                    <option value="customer">Retail Customer</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="accountNumberGroup" style="display: none;">
+                            <label class="form-label">Account Number</label>
+                            <input 
+                                type="text" 
+                                class="form-input" 
+                                id="accountNumber"
+                                placeholder="Enter your account number"
+                                value="ACC-38471"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input 
+                                type="email" 
+                                class="form-input" 
+                                id="email"
+                                placeholder="you@company.com"
+                                value="demo@esyasoft.com"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input 
+                                type="password" 
+                                class="form-input" 
+                                id="password"
+                                placeholder="Enter your password"
+                                value="demo123"
+                                required
+                            >
+                        </div>
+
+                        <button type="submit" class="login-btn">Sign In</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 2: CHATBOT INTERFACE ==================== -->
+    <div id="chatbotPage" class="page">
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <span>EsyaSoft</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="user-profile" onclick="handleLogout()">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">User</div>
+                        <div class="user-role" id="displayRole">Role</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <div class="greeting-section">
+                <div class="greeting-icon">👋</div>
+                <h1 id="greeting">Good Day, <span class="greeting-name" id="greetingName">User</span></h1>
+                <p>What's on <span style="color: var(--primary-dark); font-weight: 600;">your mind?</span></p>
+                <p class="subtitle">Find answers to your questions quickly or choose a category below to refine results</p>
+            </div>
+
+            <div class="search-section">
+                <div class="search-wrapper">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput"
+                        placeholder="ASK ANYTHING. TYPE @ FOR MENTIONS AND / FOR SHORTCUTS"
+                        onkeypress="handleSearch(event)"
+                    >
+                    <div class="search-actions">
+                        <button class="action-btn" title="Search web">🌐</button>
+                        <button class="action-btn" title="Attach file">📎</button>
+                        <button class="action-btn" title="Voice input">🎤</button>
+                        <button class="action-btn primary" onclick="submitQuery()">
+                            <span>Ask AI</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="categories-section">
+                <h2>Quick Access Categories</h2>
+                <div class="categories-grid" id="categoriesGrid">
+                    <div class="category-card" data-category="load" onclick="openDashboard('load-forecasting')">
+                        <div class="category-icon">⚡</div>
+                        <div class="category-title">Load Forecasting</div>
+                        <div class="category-description">
+                            View real-time load predictions, peak demand forecasts, and consumption patterns
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="theft" onclick="openDashboard('theft-analysis')">
+                        <div class="category-icon">🔍</div>
+                        <div class="category-title">Theft Analysis</div>
+                        <div class="category-description">
+                            Detect anomalies, identify high-risk accounts, and analyze theft patterns
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="tariff" onclick="openDashboard('tariff-misuse')">
+                        <div class="category-icon">⚠️</div>
+                        <div class="category-title">Tariff Misuse Detection</div>
+                        <div class="category-description">
+                            Monitor tariff violations, track revenue loss, and optimize classifications
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="consumer" onclick="openDashboard('consumer-indexation')">
+                        <div class="category-icon">👥</div>
+                        <div class="category-title">Consumer Indexation</div>
+                        <div class="category-description">
+                            Analyze consumer demographics, segments, and consumption trends
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="defaulter" onclick="openDashboard('defaulter-predictor')">
+                        <div class="category-icon">💰</div>
+                        <div class="category-title">Defaulter Predictor</div>
+                        <div class="category-description">
+                            Predict payment defaults, manage collections, and assess credit risks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 3: DASHBOARD ==================== -->
+    <div id="dashboardPage" class="page">
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo" onclick="showPage('chatbotPage')">
+                    <div class="logo-icon">⚡</div>
+                    <span>EsyaSoft</span>
+                </div>
+                <div class="breadcrumb">
+                    <a onclick="showPage('chatbotPage')">Home</a>
+                    <span>/</span>
+                    <span class="current" id="breadcrumbCategory">Analytics</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="back-btn" onclick="showPage('chatbotPage')">
+                    <span>←</span>
+                    <span>Back</span>
+                </button>
+                <button class="ask-ai-btn" onclick="openChatFromDashboard()">
+                    <span>💬</span>
+                    <span>Ask AI</span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="main-container" id="dashboardContent">
+            <!-- Dashboard content will be dynamically loaded -->
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 4: CHAT RESPONSE ==================== -->
+    <div id="chatPage" class="page">
+        <nav class="navbar">
+            <div class="logo" onclick="showPage('chatbotPage')">
+                <div class="logo-icon">⚡</div>
+                <span>EsyaSoft</span>
+            </div>
+            <button class="back-btn" onclick="showPage('chatbotPage')">
+                <span>←</span>
+                <span>Back to Home</span>
+            </button>
+        </nav>
+
+        <div class="chat-container">
+            <div class="user-message">
+                <div class="message-header">
+                    <div class="avatar user-avatar" id="chatUserAvatar">JD</div>
+                    <div class="message-info">
+                        <div class="message-author">You</div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+                <div class="message-content" id="userQuestion">
+                    Loading your question...
+                </div>
+            </div>
+
+            <div class="ai-response">
+                <div class="message-header">
+                    <div class="avatar ai-avatar">🤖</div>
+                    <div class="message-info">
+                        <div class="message-author">AI Assistant</div>
+                        <div class="message-time">Analyzing...</div>
+                    </div>
+                </div>
+
+                <div class="thinking-indicator" id="thinkingIndicator">
+                    <span>Thinking</span>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+
+                <div class="response-text" id="aiResponse" style="display: none;">
+                    <!-- AI response will be inserted here -->
+                </div>
+
+                <div class="sources-section" id="sourcesSection" style="display: none;">
+                    <div class="sources-title">📚 Sources & References</div>
+                    <div class="sources-grid" id="sourcesGrid">
+                        <!-- Sources will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="action-buttons" id="actionButtons" style="display: none;">
+                    <button class="action-btn" onclick="alert('Response copied!')">📋 Copy</button>
+                    <button class="action-btn" onclick="alert('Exporting as PDF...')">📥 Export</button>
+                    <button class="action-btn" onclick="alert('Share link generated!')">🔗 Share</button>
+                    <button class="action-btn primary" onclick="showPage('dashboardPage')">📊 View Dashboard</button>
+                </div>
+            </div>
+
+            <div class="follow-up-section" id="followUpSection" style="display: none;">
+                <div class="follow-up-title">💡 Related Questions You Might Ask</div>
+                <div class="follow-up-grid" id="followUpGrid">
+                    <!-- Follow-up questions will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 5: RETAIL CUSTOMER INTERFACE ==================== -->
+    <div id="customerPage" class="page">
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <span>EsyaSoft</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="user-profile" onclick="handleLogout()">
+                    <div class="user-avatar" id="customerAvatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name" id="customerName">Customer</div>
+                        <div class="user-role" id="customerAccount">Account</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <!-- Customer Context Card -->
+            <div class="customer-context-card" id="customerContextCard">
+                <div class="context-header">
+                    <div class="context-icon">👤</div>
+                    <div class="context-info">
+                        <h3 id="contextCustomerName">Loading...</h3>
+                        <p id="contextAccountNumber">Account: Loading...</p>
+                    </div>
+                    <div class="cache-indicator">
+                        <span class="cache-dot"></span>
+                        <span class="cache-text">Context Loaded</span>
+                    </div>
+                </div>
+                <div class="context-grid">
+                    <div class="context-item">
+                        <div class="context-label">Current Bill</div>
+                        <div class="context-value" id="contextBillAmount">$0</div>
+                        <div class="context-meta" id="contextDueDate">Due: --</div>
+                    </div>
+                    <div class="context-item">
+                        <div class="context-label">This Month Usage</div>
+                        <div class="context-value" id="contextConsumption">0 kWh</div>
+                        <div class="context-meta" id="contextConsumptionTrend">--</div>
+                    </div>
+                    <div class="context-item">
+                        <div class="context-label">Account Status</div>
+                        <div class="context-value" id="contextAccountStatus">Active</div>
+                        <div class="context-meta" id="contextPaymentStatus">--</div>
+                    </div>
+                    <div class="context-item">
+                        <div class="context-label">Service Area</div>
+                        <div class="context-value" id="contextRegion">--</div>
+                        <div class="context-meta" id="contextOutageStatus">No outages</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="customer-chat-section">
+                <div class="chat-header-section">
+                    <h2>How can I help you today?</h2>
+                    <p>Ask me about your bill, consumption, outages, or general support questions</p>
+                </div>
+
+                <!-- Quick Action Cards -->
+                <div class="quick-actions-grid">
+                    <div class="quick-action-card" onclick="askCustomerQuestion('Why is my bill high this month?')">
+                        <div class="quick-action-icon">💰</div>
+                        <div class="quick-action-text">Explain My Bill</div>
+                    </div>
+                    <div class="quick-action-card" onclick="askCustomerQuestion('What is my current consumption?')">
+                        <div class="quick-action-icon">⚡</div>
+                        <div class="quick-action-text">Check Usage</div>
+                    </div>
+                    <div class="quick-action-card" onclick="askCustomerQuestion('Are there any outages in my area?')">
+                        <div class="quick-action-icon">🔌</div>
+                        <div class="quick-action-text">Outage Status</div>
+                    </div>
+                    <div class="quick-action-card" onclick="askCustomerQuestion('How can I pay my bill?')">
+                        <div class="quick-action-icon">💳</div>
+                        <div class="quick-action-text">Payment Options</div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="customer-messages" id="customerMessages">
+                    <!-- Messages will be added here -->
+                </div>
+
+                <!-- Chat Input -->
+                <div class="customer-input-section">
+                    <div class="customer-input-wrapper">
+                        <input 
+                            type="text" 
+                            class="customer-input" 
+                            id="customerInput"
+                            placeholder="Type your question here..."
+                            onkeypress="handleCustomerInput(event)"
+                        >
+                        <button class="customer-send-btn" onclick="sendCustomerMessage()">
+                            <span>Send</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        💡 Powered by cached context for instant responses
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== APPLICATION STATE ====================
+        let appState = {
+            currentUser: null,
+            userRole: null,
+            currentCategory: null,
+            currentQuery: null,
+            charts: {},
+            customerContext: null, // Cached customer data
+            conversationHistory: []
+        };
+
+        // Sample customer contexts (simulating Redis cache)
+        const customerContextDatabase = {
+            'ACC-38471': {
+                account: {
+                    id: 'ACC-38471',
+                    name: 'John Mitchell',
+                    address: '742 Evergreen Terrace, East District',
+                    phone: '+1 (555) 123-4567',
+                    email: 'john.mitchell@email.com'
+                },
+                billing: {
+                    current_bill: 127.50,
+                    due_date: 'January 22, 2026',
+                    outstanding: 0,
+                    last_payment: 95.30,
+                    last_payment_date: 'December 18, 2025',
+                    payment_history: [85.20, 78.40, 92.10, 88.50, 91.20, 95.30]
+                },
+                consumption: {
+                    current_month: 542,
+                    last_month: 405,
+                    avg_6month: 387,
+                    monthly_history: [365, 378, 392, 385, 402, 405],
+                    trend: 'increasing',
+                    avg_daily: 18.1
+                },
+                tariff: {
+                    current: 'Residential Standard',
+                    rate: 0.235,
+                    tier: 'Tier 2',
+                    recommended: null
+                },
+                anomalies: {
+                    detected: false,
+                    anomaly_score: 12.3,
+                    recent_flags: []
+                },
+                region: {
+                    name: 'East District',
+                    id: 'EAST-01',
+                    current_load: 2847,
+                    outages: []
+                },
+                metadata: {
+                    cached_at: new Date().toISOString(),
+                    ttl: 1800, // 30 minutes
+                    cache_hit_count: 0
+                }
+            },
+            'ACC-29384': {
+                account: {
+                    id: 'ACC-29384',
+                    name: 'Sarah Chen',
+                    address: '156 Oak Avenue, North District',
+                    phone: '+1 (555) 987-6543',
+                    email: 'sarah.chen@email.com'
+                },
+                billing: {
+                    current_bill: 89.20,
+                    due_date: 'January 20, 2026',
+                    outstanding: 45.00,
+                    last_payment: 75.50,
+                    last_payment_date: 'December 15, 2025',
+                    payment_history: [72.10, 68.90, 75.30, 71.80, 73.40, 75.50]
+                },
+                consumption: {
+                    current_month: 379,
+                    last_month: 321,
+                    avg_6month: 312,
+                    monthly_history: [298, 305, 318, 310, 325, 321],
+                    trend: 'stable',
+                    avg_daily: 12.6
+                },
+                tariff: {
+                    current: 'Residential Standard',
+                    rate: 0.235,
+                    tier: 'Tier 1',
+                    recommended: null
+                },
+                anomalies: {
+                    detected: false,
+                    anomaly_score: 8.7,
+                    recent_flags: []
+                },
+                region: {
+                    name: 'North District',
+                    id: 'NORTH-01',
+                    current_load: 3104,
+                    outages: []
+                },
+                metadata: {
+                    cached_at: new Date().toISOString(),
+                    ttl: 1800,
+                    cache_hit_count: 0
+                }
+            }
+        };
+
+        // FAQ Vector DB (simulated)
+        const faqDatabase = [
+            {
+                question: 'How can I pay my bill?',
+                answer: 'You can pay your bill through: 1) Online at our website, 2) Mobile app, 3) Automatic bank transfer, 4) In-person at any authorized payment center, 5) By mail with check or money order.'
+            },
+            {
+                question: 'How do I report a power outage?',
+                answer: 'To report a power outage, call our 24/7 hotline at 1-800-POWER-ON or use the "Report Outage" feature in our mobile app. Please have your account number ready.'
+            },
+            {
+                question: 'Can I change my billing due date?',
+                answer: 'Yes, you can request a billing due date change by logging into your account and going to Settings > Billing Preferences, or by calling customer service at 1-800-555-0123.'
+            },
+            {
+                question: 'What is a typical electricity bill?',
+                answer: 'The average residential electricity bill varies by location and season, but typically ranges from $80-$120/month for a standard household. Your actual bill depends on consumption, tariff rate, and seasonal factors.'
+            }
+        ];
+
+        // RBAC Configuration
+        const rolePermissions = {
+            'admin': ['load-forecasting', 'theft-analysis', 'tariff-misuse', 'consumer-indexation', 'defaulter-predictor'],
+            'analyst': ['load-forecasting', 'theft-analysis', 'consumer-indexation', 'defaulter-predictor'],
+            'operator': ['load-forecasting', 'consumer-indexation'],
+            'viewer': ['load-forecasting']
+        };
+
+        // Dashboard configurations
+        const dashboards = {
+            'load-forecasting': {
+                icon: '⚡',
+                title: 'Load Forecasting',
+                subtitle: 'Real-time load predictions and consumption analysis',
+                kpis: [
+                    { label: 'Current Load', value: '2,847 MW', change: '↑ 12.4%', positive: true, icon: '⚡', color: 'rgba(59, 130, 246, 0.2)' },
+                    { label: 'Peak Forecast', value: '3,240 MW', change: '↑ 8.2%', positive: true, icon: '📊', color: 'rgba(245, 158, 11, 0.2)' },
+                    { label: 'Accuracy', value: '96.8%', change: '↑ 2.1%', positive: true, icon: '✓', color: 'rgba(16, 185, 129, 0.2)' },
+                    { label: 'Grid Capacity', value: '4,500 MW', change: '63.3% Used', positive: true, icon: '🔌', color: 'rgba(126, 217, 87, 0.2)' }
+                ]
+            },
+            'theft-analysis': {
+                icon: '🔍',
+                title: 'Theft Analysis',
+                subtitle: 'Anomaly detection and revenue loss tracking',
+                kpis: [
+                    { label: 'Active Cases', value: '247', change: '↑ 18 new', positive: false, icon: '🔍', color: 'rgba(239, 68, 68, 0.2)' },
+                    { label: 'Est. Loss (MTD)', value: '$342K', change: '↑ 15.2%', positive: false, icon: '💸', color: 'rgba(245, 158, 11, 0.2)' },
+                    { label: 'Detection Rate', value: '87.3%', change: '↑ 4.5%', positive: true, icon: '✓', color: 'rgba(16, 185, 129, 0.2)' },
+                    { label: 'Recovery Rate', value: '64.8%', change: '↑ 7.3%', positive: true, icon: '💰', color: 'rgba(59, 130, 246, 0.2)' }
+                ]
+            },
+            'tariff-misuse': {
+                icon: '⚠️',
+                title: 'Tariff Misuse Detection',
+                subtitle: 'Revenue protection and tariff optimization',
+                kpis: [
+                    { label: 'Misuse Cases', value: '182', change: '↑ 14 new', positive: false, icon: '⚠️', color: 'rgba(239, 68, 68, 0.2)' },
+                    { label: 'Revenue Loss', value: '$189K', change: '↑ 22.1%', positive: false, icon: '💰', color: 'rgba(245, 158, 11, 0.2)' },
+                    { label: 'Resolved Cases', value: '94', change: '↑ 16.7%', positive: true, icon: '✓', color: 'rgba(16, 185, 129, 0.2)' },
+                    { label: 'Avg Resolution', value: '12.4d', change: '↓ 3.2d', positive: true, icon: '⏱️', color: 'rgba(59, 130, 246, 0.2)' }
+                ]
+            },
+            'consumer-indexation': {
+                icon: '👥',
+                title: 'Consumer Indexation',
+                subtitle: 'Demographics and consumption patterns',
+                kpis: [
+                    { label: 'Total Consumers', value: '284,742', change: '↑ 2,340', positive: true, icon: '👥', color: 'rgba(59, 130, 246, 0.2)' },
+                    { label: 'Active Accounts', value: '278,103', change: '97.7%', positive: true, icon: '✓', color: 'rgba(16, 185, 129, 0.2)' },
+                    { label: 'New Registrations', value: '1,847', change: '↑ 12.3%', positive: true, icon: '📝', color: 'rgba(245, 158, 11, 0.2)' },
+                    { label: 'Avg Consumption', value: '347 kWh', change: '↑ 8.9%', positive: true, icon: '⚡', color: 'rgba(126, 217, 87, 0.2)' }
+                ]
+            },
+            'defaulter-predictor': {
+                icon: '💰',
+                title: 'Defaulter Predictor',
+                subtitle: 'Payment risk assessment and collection optimization',
+                kpis: [
+                    { label: 'High Risk Accounts', value: '3,847', change: '↑ 287', positive: false, icon: '⚠️', color: 'rgba(239, 68, 68, 0.2)' },
+                    { label: 'Outstanding', value: '$2.4M', change: '↑ 18.2%', positive: false, icon: '💰', color: 'rgba(245, 158, 11, 0.2)' },
+                    { label: 'Collection Rate', value: '82.7%', change: '↑ 5.3%', positive: true, icon: '✓', color: 'rgba(16, 185, 129, 0.2)' },
+                    { label: 'Prediction Accuracy', value: '91.4%', change: '↑ 3.1%', positive: true, icon: '🎯', color: 'rgba(59, 130, 246, 0.2)' }
+                ]
+            }
+        };
+
+        // ==================== PAGE NAVIGATION ====================
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Initialize page-specific logic
+            if (pageId === 'chatbotPage') {
+                initializeChatbot();
+            } else if (pageId === 'dashboardPage') {
+                initializeDashboard();
+            } else if (pageId === 'chatPage') {
+                initializeChatResponse();
+            }
+        }
+
+        // ==================== LOGIN ====================
+        function handleRoleChange() {
+            const role = document.getElementById('userRole').value;
+            const accountGroup = document.getElementById('accountNumberGroup');
+            
+            if (role === 'customer') {
+                accountGroup.style.display = 'block';
+            } else {
+                accountGroup.style.display = 'none';
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const role = document.getElementById('userRole').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Validate inputs
+            if (!role) {
+                alert('Please select a user type');
+                return false;
+            }
+            
+            if (!email) {
+                alert('Please enter an email');
+                return false;
+            }
+            
+            if (!password) {
+                alert('Please enter a password');
+                return false;
+            }
+            
+            const userName = email.split('@')[0];
+            
+            // Store user session
+            appState.currentUser = userName;
+            appState.userRole = role;
+            
+            // Show loading state
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = 'Signing In...';
+            btn.disabled = true;
+            
+            // Simulate authentication delay
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                
+                // Navigate based on role
+                if (role === 'customer') {
+                    const accountNumber = document.getElementById('accountNumber').value;
+                    appState.customerAccountNumber = accountNumber;
+                    
+                    // Load customer context (simulating cache)
+                    loadCustomerContext(accountNumber);
+                    showPage('customerPage');
+                } else {
+                    // Navigate to enterprise chatbot interface
+                    showPage('chatbotPage');
+                }
+            }, 800);
+            
+            return false;
+        }
+
+        function handleLogout() {
+            const confirm = window.confirm('Do you want to logout?');
+            if (confirm) {
+                appState = {
+                    currentUser: null,
+                    userRole: null,
+                    currentCategory: null,
+                    currentQuery: null,
+                    charts: {}
+                };
+                showPage('loginPage');
+            }
+        }
+
+        // ==================== CHATBOT INTERFACE ====================
+        function initializeChatbot() {
+            if (!appState.currentUser) {
+                showPage('loginPage');
+                return;
+            }
+
+            // Update user info
+            const userName = appState.currentUser;
+            document.getElementById('userName').textContent = userName.charAt(0).toUpperCase() + userName.slice(1);
+            document.getElementById('displayRole').textContent = appState.userRole.charAt(0).toUpperCase() + appState.userRole.slice(1);
+            document.getElementById('userAvatar').textContent = userName.substring(0, 2).toUpperCase();
+            document.getElementById('greetingName').textContent = userName.charAt(0).toUpperCase() + userName.slice(1);
+
+            // Set greeting
+            const hour = new Date().getHours();
+            let greeting = 'Good Evening';
+            if (hour < 12) greeting = 'Good Morning';
+            else if (hour < 18) greeting = 'Good Afternoon';
+            
+            const name = document.getElementById('greetingName').textContent;
+            document.getElementById('greeting').innerHTML = `${greeting}, <span class="greeting-name">${name}</span>`;
+
+            // Apply RBAC
+            applyRBAC();
+        }
+
+        function applyRBAC() {
+            const allowedCategories = rolePermissions[appState.userRole] || [];
+            const cards = document.querySelectorAll('.category-card');
+            
+            cards.forEach(card => {
+                const categoryTitle = card.querySelector('.category-title').textContent.toLowerCase();
+                
+                let isAllowed = false;
+                allowedCategories.forEach(allowed => {
+                    if (categoryTitle.includes(allowed.replace('-', ' '))) {
+                        isAllowed = true;
+                    }
+                });
+                
+                if (!isAllowed) {
+                    card.setAttribute('data-restricted', 'true');
+                } else {
+                    card.removeAttribute('data-restricted');
+                }
+            });
+        }
+
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                submitQuery();
+            }
+        }
+
+        function submitQuery() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                appState.currentQuery = query;
+                showPage('chatPage');
+            }
+        }
+
+        function openDashboard(category) {
+            appState.currentCategory = category;
+            showPage('dashboardPage');
+        }
+
+        // ==================== DASHBOARD ====================
+        function initializeDashboard() {
+            const category = appState.currentCategory || 'load-forecasting';
+            const config = dashboards[category];
+
+            if (!config) {
+                showPage('chatbotPage');
+                return;
+            }
+
+            // Update breadcrumb
+            document.getElementById('breadcrumbCategory').textContent = config.title;
+
+            // Build dashboard HTML
+            const content = `
+                <div class="dashboard-header">
+                    <div class="dashboard-title">
+                        <div class="dashboard-icon">${config.icon}</div>
+                        <div>
+                            <h1>${config.title}</h1>
+                            <p>${config.subtitle}</p>
+                        </div>
+                    </div>
+                    <div class="time-selector">
+                        <button class="active">Today</button>
+                        <button>7D</button>
+                        <button>30D</button>
+                        <button>90D</button>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    ${config.kpis.map(kpi => `
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div>
+                                    <div class="kpi-label">${kpi.label}</div>
+                                    <div class="kpi-value">${kpi.value}</div>
+                                    <span class="kpi-change ${kpi.positive ? 'positive' : 'negative'}">${kpi.change}</span>
+                                </div>
+                                <div class="kpi-icon" style="background: ${kpi.color};">${kpi.icon}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Trend Analysis</h3>
+                        </div>
+                        <canvas id="trendChart" height="80"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Regional Distribution</h3>
+                        </div>
+                        <canvas id="regionChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Performance Metrics</h3>
+                        </div>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Top Priority Items</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Description</th>
+                                <th>Metric</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#${Math.floor(Math.random() * 90000) + 10000}</td>
+                                <td>High-priority item</td>
+                                <td>${Math.floor(Math.random() * 100)}%</td>
+                                <td><span class="status-badge status-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td>#${Math.floor(Math.random() * 90000) + 10000}</td>
+                                <td>Medium-priority item</td>
+                                <td>${Math.floor(Math.random() * 100)}%</td>
+                                <td><span class="status-badge status-warning">Warning</span></td>
+                            </tr>
+                            <tr>
+                                <td>#${Math.floor(Math.random() * 90000) + 10000}</td>
+                                <td>Normal-priority item</td>
+                                <td>${Math.floor(Math.random() * 100)}%</td>
+                                <td><span class="status-badge status-normal">Normal</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="ai-cta-section">
+                    <h3>Need Deeper Insights?</h3>
+                    <p>Ask our AI assistant for detailed analysis, predictions, or recommendations based on this data</p>
+                    <button class="ai-cta-btn" onclick="openChatFromDashboard()">
+                        <span>💬</span>
+                        <span>Ask AI About ${config.title}</span>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('dashboardContent').innerHTML = content;
+
+            // Initialize charts
+            setTimeout(() => initializeCharts(), 100);
+        }
+
+        function initializeCharts() {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: { color: '#6c757d', font: { size: 12 } }
+                    }
+                }
+            };
+
+            // Destroy existing charts
+            if (appState.charts.trend) appState.charts.trend.destroy();
+            if (appState.charts.region) appState.charts.region.destroy();
+            if (appState.charts.performance) appState.charts.performance.destroy();
+
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart');
+            if (trendCtx) {
+                appState.charts.trend = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Actual',
+                            data: [65, 72, 68, 78, 82, 85],
+                            borderColor: '#7ed957',
+                            backgroundColor: 'rgba(126, 217, 87, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: commonOptions
+                });
+            }
+
+            // Region Chart
+            const regionCtx = document.getElementById('regionChart');
+            if (regionCtx) {
+                appState.charts.region = new Chart(regionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['North', 'South', 'East', 'West', 'Central'],
+                        datasets: [{
+                            data: [30, 25, 20, 15, 10],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                        }]
+                    }
+                });
+            }
+
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart');
+            if (perfCtx) {
+                appState.charts.performance = new Chart(perfCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Performance',
+                            data: [85, 90, 87, 92, 88, 78, 82],
+                            backgroundColor: '#7ed957'
+                        }]
+                    },
+                    options: commonOptions
+                });
+            }
+        }
+
+        function openChatFromDashboard() {
+            const category = appState.currentCategory;
+            const config = dashboards[category];
+            appState.currentQuery = `Tell me more about ${config.title} insights`;
+            showPage('chatPage');
+        }
+
+        // ==================== CHAT RESPONSE ====================
+        function initializeChatResponse() {
+            const query = appState.currentQuery || 'Tell me about the analytics';
+            const userName = appState.currentUser || 'user';
+
+            // Update user info
+            document.getElementById('userQuestion').textContent = query;
+            document.getElementById('chatUserAvatar').textContent = userName.substring(0, 2).toUpperCase();
+
+            // Simulate AI processing
+            setTimeout(() => {
+                displayAIResponse();
+            }, 2000);
+        }
+
+        function displayAIResponse() {
+            // Hide thinking indicator
+            document.getElementById('thinkingIndicator').style.display = 'none';
+
+            // AI response
+            const responseHTML = `
+                <h3>Key Findings</h3>
+                <p>Based on the data analysis across your utility network, I've identified several key insights that require attention. Current metrics indicate strong performance trends with optimization opportunities in specific operational areas.</p>
+
+                <h3>Detailed Analysis</h3>
+                <ul>
+                    <li><strong>Performance Metrics:</strong> Overall system efficiency is running at 94.2%, which is above industry benchmarks and indicates robust operational health.</li>
+                    <li><strong>Risk Assessment:</strong> 3 high-priority items require immediate attention to prevent service disruption and maintain service level agreements.</li>
+                    <li><strong>Optimization Opportunities:</strong> Implementing recommended changes could result in 12-15% efficiency gains across the network.</li>
+                    <li><strong>Predictive Insights:</strong> Machine learning models indicate stable operations for the next 30 days with 96% confidence level.</li>
+                </ul>
+
+                <h3>Recommendations</h3>
+                <p>Focus on the three critical areas identified in the dashboard, implement suggested optimizations during the next maintenance window, and continue monitoring predictive indicators on a weekly basis.</p>
+            `;
+
+            document.getElementById('aiResponse').innerHTML = responseHTML;
+            document.getElementById('aiResponse').style.display = 'block';
+
+            // Sources
+            const sources = [
+                { title: 'Load Analysis Database', url: 'internal://postgres/load_data', icon: '📊' },
+                { title: 'Historical Patterns', url: 'internal://analytics/trends', icon: '📈' },
+                { title: 'ML Prediction Model', url: 'internal://ml/forecasts', icon: '🤖' }
+            ];
+
+            document.getElementById('sourcesGrid').innerHTML = sources.map(source => `
+                <div class="source-card">
+                    <div class="source-icon">${source.icon}</div>
+                    <div class="source-title">${source.title}</div>
+                    <div class="source-url">${source.url}</div>
+                </div>
+            `).join('');
+            document.getElementById('sourcesSection').style.display = 'block';
+
+            // Action buttons
+            document.getElementById('actionButtons').style.display = 'flex';
+
+            // Follow-up questions
+            const followUps = [
+                'What are the top 3 risk factors identified?',
+                'Show me a detailed breakdown by region',
+                'How does this compare to last quarter?',
+                'Generate a report with these insights'
+            ];
+
+            document.getElementById('followUpGrid').innerHTML = followUps.map(q => `
+                <div class="follow-up-question" onclick="askFollowUp('${q}')">${q}</div>
+            `).join('');
+            document.getElementById('followUpSection').style.display = 'block';
+        }
+
+        function askFollowUp(question) {
+            appState.currentQuery = question;
+            showPage('chatPage');
+        }
+
+        // ==================== RETAIL CUSTOMER FUNCTIONS ====================
+        function loadCustomerContext(accountNumber) {
+            // Simulate loading from Redis cache (in production, this would be an API call)
+            const context = customerContextDatabase[accountNumber];
+            
+            if (!context) {
+                alert('Account not found. Using demo account ACC-38471');
+                appState.customerContext = customerContextDatabase['ACC-38471'];
+                appState.customerAccountNumber = 'ACC-38471';
+            } else {
+                appState.customerContext = context;
+                appState.customerContext.metadata.cache_hit_count++;
+            }
+            
+            // Update UI with cached context
+            updateCustomerUI();
+        }
+
+        function updateCustomerUI() {
+            const ctx = appState.customerContext;
+            
+            // Update navbar
+            document.getElementById('customerName').textContent = ctx.account.name.split(' ')[0];
+            document.getElementById('customerAccount').textContent = ctx.account.id;
+            document.getElementById('customerAvatar').textContent = ctx.account.name.split(' ').map(n => n[0]).join('');
+            
+            // Update context card
+            document.getElementById('contextCustomerName').textContent = ctx.account.name;
+            document.getElementById('contextAccountNumber').textContent = `Account: ${ctx.account.id}`;
+            
+            document.getElementById('contextBillAmount').textContent = `$${ctx.billing.current_bill.toFixed(2)}`;
+            document.getElementById('contextDueDate').textContent = `Due: ${ctx.billing.due_date}`;
+            
+            document.getElementById('contextConsumption').textContent = `${ctx.consumption.current_month} kWh`;
+            const consumptionChange = ((ctx.consumption.current_month - ctx.consumption.last_month) / ctx.consumption.last_month * 100).toFixed(1);
+            document.getElementById('contextConsumptionTrend').textContent = `${consumptionChange > 0 ? '↑' : '↓'} ${Math.abs(consumptionChange)}% vs last month`;
+            
+            document.getElementById('contextAccountStatus').textContent = ctx.billing.outstanding > 0 ? 'Overdue' : 'Active';
+            document.getElementById('contextPaymentStatus').textContent = ctx.billing.outstanding > 0 ? `Outstanding: $${ctx.billing.outstanding}` : 'No outstanding balance';
+            
+            document.getElementById('contextRegion').textContent = ctx.region.name;
+            document.getElementById('contextOutageStatus').textContent = ctx.region.outages.length > 0 ? `${ctx.region.outages.length} active outage(s)` : 'No outages';
+            
+            // Clear conversation history
+            appState.conversationHistory = [];
+            document.getElementById('customerMessages').innerHTML = '';
+            
+            // Add welcome message
+            addAssistantMessage(`Hello ${ctx.account.name.split(' ')[0]}! 👋 I have your account information loaded and ready. How can I help you today?`);
+        }
+
+        function addUserMessage(text) {
+            const messagesContainer = document.getElementById('customerMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'customer-message user';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-bubble-text">${text}</div>
+                    <div class="message-bubble-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Add to conversation history
+            appState.conversationHistory.push({
+                role: 'user',
+                content: text,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        function addAssistantMessage(text, responseTime = null) {
+            const messagesContainer = document.getElementById('customerMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'customer-message assistant';
+            
+            let responseTimeBadge = '';
+            if (responseTime !== null) {
+                responseTimeBadge = `<div class="response-time-badge">⚡ ${responseTime}ms - Cached response</div>`;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-bubble-text">${text}</div>
+                    ${responseTimeBadge}
+                    <div class="message-bubble-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Add to conversation history
+            appState.conversationHistory.push({
+                role: 'assistant',
+                content: text,
+                timestamp: new Date().toISOString(),
+                response_time: responseTime
+            });
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('customerMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'customer-message assistant';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="typing-indicator">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingDiv = document.getElementById('typingIndicator');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        function handleCustomerInput(event) {
+            if (event.key === 'Enter') {
+                sendCustomerMessage();
+            }
+        }
+
+        function sendCustomerMessage() {
+            const input = document.getElementById('customerInput');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            // Clear input
+            input.value = '';
+            
+            // Add user message
+            addUserMessage(question);
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Get AI response (simulated with cached context)
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateCustomerResponse(question);
+                addAssistantMessage(response.text, response.responseTime);
+            }, 300 + Math.random() * 200); // Simulate very fast response
+        }
+
+        function askCustomerQuestion(question) {
+            document.getElementById('customerInput').value = question;
+            sendCustomerMessage();
+        }
+
+        function generateCustomerResponse(question) {
+            const startTime = performance.now();
+            const ctx = appState.customerContext;
+            const lowerQuestion = question.toLowerCase();
+            
+            let response = '';
+            
+            // Bill-related questions (uses cached billing data)
+            if (lowerQuestion.includes('bill') && (lowerQuestion.includes('high') || lowerQuestion.includes('why') || lowerQuestion.includes('explain'))) {
+                const change = ((ctx.consumption.current_month - ctx.consumption.last_month) / ctx.consumption.last_month * 100).toFixed(1);
+                const billChange = ((ctx.billing.current_bill - ctx.billing.last_payment) / ctx.billing.last_payment * 100).toFixed(1);
+                response = `Your current bill is $${ctx.billing.current_bill.toFixed(2)}, which is ${billChange > 0 ? 'up' : 'down'} ${Math.abs(billChange)}% from last month's $${ctx.billing.last_payment.toFixed(2)}. This is primarily due to your consumption increasing from ${ctx.consumption.last_month} kWh to ${ctx.consumption.current_month} kWh (${change > 0 ? '+' : ''}${change}%). ${ctx.anomalies.detected ? 'We also detected some usage anomalies that may have contributed.' : 'No anomalies were detected in your usage pattern.'}`;
+            }
+            // Current bill amount
+            else if (lowerQuestion.includes('bill') && (lowerQuestion.includes('current') || lowerQuestion.includes('amount') || lowerQuestion.includes('how much'))) {
+                response = `Your current bill is $${ctx.billing.current_bill.toFixed(2)}, due on ${ctx.billing.due_date}. ${ctx.billing.outstanding > 0 ? `You also have an outstanding balance of $${ctx.billing.outstanding.toFixed(2)} from previous billing periods.` : 'Your account has no outstanding balance.'}`;
+            }
+            // Consumption questions
+            else if (lowerQuestion.includes('consumption') || lowerQuestion.includes('usage') || lowerQuestion.includes('kwh')) {
+                response = `This month, you've used ${ctx.consumption.current_month} kWh so far, which averages ${ctx.consumption.avg_daily.toFixed(1)} kWh per day. Last month you used ${ctx.consumption.last_month} kWh, and your 6-month average is ${ctx.consumption.avg_6month} kWh. Your usage trend is ${ctx.consumption.trend}.`;
+            }
+            // Outage questions
+            else if (lowerQuestion.includes('outage') || lowerQuestion.includes('power out')) {
+                if (ctx.region.outages.length > 0) {
+                    response = `There ${ctx.region.outages.length === 1 ? 'is' : 'are'} currently ${ctx.region.outages.length} active outage${ctx.region.outages.length > 1 ? 's' : ''} in your area (${ctx.region.name}). Our crews are working to restore power. Would you like more details?`;
+                } else {
+                    response = `Good news! There are no active outages in your area (${ctx.region.name}). The grid is operating normally with current load at ${ctx.region.current_load} MW.`;
+                }
+            }
+            // Payment questions
+            else if (lowerQuestion.includes('pay') && !lowerQuestion.includes('payment history')) {
+                const faq = faqDatabase.find(f => f.question.toLowerCase().includes('pay'));
+                response = faq ? faq.answer : 'You can pay online, through our mobile app, or at authorized payment centers. Would you like me to explain each option?';
+            }
+            // Payment history
+            else if (lowerQuestion.includes('payment history') || lowerQuestion.includes('past payment')) {
+                const history = ctx.billing.payment_history.map((amt, i) => `$${amt.toFixed(2)}`).join(', ');
+                response = `Your last 6 payments were: ${history}. Your most recent payment of $${ctx.billing.last_payment.toFixed(2)} was made on ${ctx.billing.last_payment_date}.`;
+            }
+            // Tariff questions
+            else if (lowerQuestion.includes('tariff') || lowerQuestion.includes('rate') || lowerQuestion.includes('plan')) {
+                response = `You're currently on the "${ctx.tariff.current}" plan at $${ctx.tariff.rate.toFixed(3)} per kWh (${ctx.tariff.tier}). ${ctx.tariff.recommended ? `Based on your usage pattern, we recommend considering our ${ctx.tariff.recommended} plan for potential savings.` : 'This appears to be the optimal plan for your consumption pattern.'}`;
+            }
+            // Account status
+            else if (lowerQuestion.includes('account') && (lowerQuestion.includes('status') || lowerQuestion.includes('info'))) {
+                response = `Your account (${ctx.account.id}) is ${ctx.billing.outstanding > 0 ? 'active with an outstanding balance' : 'active and in good standing'}. You're located in ${ctx.region.name}. Your contact email is ${ctx.account.email} and phone is ${ctx.account.phone}.`;
+            }
+            // Generic FAQ search
+            else {
+                const matchedFaq = faqDatabase.find(f => {
+                    const faqWords = f.question.toLowerCase().split(' ');
+                    return faqWords.some(word => lowerQuestion.includes(word));
+                });
+                
+                if (matchedFaq) {
+                    response = matchedFaq.answer;
+                } else {
+                    response = `I understand you're asking about "${question}". While I have your account information loaded (Bill: $${ctx.billing.current_bill}, Usage: ${ctx.consumption.current_month} kWh, Region: ${ctx.region.name}), I'm not sure exactly what you need. Could you rephrase your question? You can ask about your bill, consumption, outages, payments, or account status.`;
+                }
+            }
+            
+            const endTime = performance.now();
+            const responseTime = Math.round(endTime - startTime);
+            
+            return {
+                text: response,
+                responseTime: responseTime
+            };
+        }
+
+        // ==================== INITIALIZE APP ====================
+        window.addEventListener('load', () => {
+            console.log('EsyaSoft Utility Platform Demo Loaded');
+            console.log('Start by logging in with any role to explore the platform');
+        });
+    </script>
+</body>
+</html>
